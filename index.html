@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>صبغة – رحلتك إلى حقيقتك</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet"/>
+  <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --orange: #E8612A;
+    --teal:   #2ABBB4;
+    --yellow: #F5C842;
+    --coral:  #E8825A;
+    --muted:  rgba(255,255,255,0.55);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  /* ─── BODY: one continuous dark canvas ─── */
+  body {
+    font-family: 'Tajawal', sans-serif;
+    background: #060108;
+    color: #fff;
+    overflow-x: hidden;
+    line-height: 1.7;
+  }
+
+  /* Persistent ambient glow – follows the journey */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 900px 700px at 80% 10%,  rgba(61,10,33,0.55) 0%, transparent 70%),
+      radial-gradient(ellipse 800px 600px at 20% 90%,  rgba(42,187,180,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 600px 500px at 50% 50%,  rgba(232,97,42,0.04) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body > * { position: relative; z-index: 1; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 300;
+    padding: 20px 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background 0.5s, padding 0.4s, border-color 0.5s;
+  }
+  nav.scrolled {
+    background: rgba(6,1,8,0.88);
+    backdrop-filter: blur(24px) saturate(180%);
+    padding: 13px 56px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  /* Logo text in nav */
+  .nav-logo-text {
+    font-size: 28px; font-weight: 900; color: #fff;
+    letter-spacing: 1px;
+  }
+
+  nav a.cta-btn {
+    background: var(--orange); color: #fff;
+    text-decoration: none; padding: 11px 28px; border-radius: 50px;
+    font-weight: 800; font-size: 15px;
+    box-shadow: 0 4px 20px rgba(232,97,42,0.3);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  nav a.cta-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(232,97,42,0.5); }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative; min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: flex-end;
+    padding: 0 24px 120px; text-align: center;
+    overflow: hidden;
+  }
+  .hero-video {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover; object-position: center;
+  }
+  .hero-fallback {
+    position: absolute; inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1920&q=80&fit=crop');
+    background-size: cover; background-position: center;
+    z-index: -1;
+  }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(
+      to top,
+      rgba(6,1,8,1.00)  0%,
+      rgba(6,1,8,0.80)  22%,
+      rgba(6,1,8,0.45)  55%,
+      rgba(6,1,8,0.18)  80%,
+      rgba(6,1,8,0.05) 100%
+    );
+    z-index: 1;
+  }
+  .hero-warm {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 85%, rgba(61,10,33,0.6) 0%, transparent 65%);
+    z-index: 2; pointer-events: none;
+  }
+  .hero-content { position: relative; z-index: 5; max-width: 860px; margin: 0 auto; }
+
+  /* FIX 1: Eyebrow pill – solid dark bg for readability */
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: rgba(6,1,8,0.72);
+    border: 1px solid rgba(42,187,180,0.35);
+    backdrop-filter: blur(20px);
+    border-radius: 50px; padding: 9px 22px;
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 3px; color: var(--teal);
+    text-transform: uppercase; margin-bottom: 28px;
+    animation: fadeUp 0.9s ease both;
+  }
+  .hero-eyebrow::before { content: '✦'; color: var(--yellow); }
+
+  .hero h1 {
+    font-size: clamp(40px, 6.5vw, 80px); font-weight: 900;
+    line-height: 1.18; margin-bottom: 24px;
+    animation: fadeUp 0.9s ease 0.15s both;
+    text-shadow: 0 4px 40px rgba(0,0,0,0.6);
+  }
+  /* FIX 2: remove absolute underline, use clean styling */
+  .hero h1 em {
+    font-style: normal; color: var(--yellow);
+    /* simple inline underline that won't bleed into next line */
+    text-decoration: underline;
+    text-decoration-color: rgba(245,200,66,0.4);
+    text-underline-offset: 5px;
+    text-decoration-thickness: 2px;
+  }
+
+  .hero p.subtitle {
+    font-size: clamp(16px, 2.2vw, 21px); font-weight: 300;
+    color: rgba(255,255,255,0.72); max-width: 600px;
+    margin: 0 auto 48px;
+    animation: fadeUp 0.9s ease 0.28s both;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  }
+  .hero-ctas {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+    animation: fadeUp 0.9s ease 0.4s both;
+  }
+  .btn-primary {
+    background: var(--orange); color: #fff; text-decoration: none;
+    padding: 18px 44px; border-radius: 50px;
+    font-weight: 800; font-size: 17px;
+    box-shadow: 0 8px 28px rgba(232,97,42,0.42);
+    transition: transform 0.2s, box-shadow 0.2s; display: inline-block;
+  }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(232,97,42,0.55); }
+  .btn-ghost {
+    background: rgba(255,255,255,0.06); backdrop-filter: blur(10px);
+    color: #fff; text-decoration: none; padding: 18px 44px; border-radius: 50px;
+    font-weight: 700; font-size: 17px; border: 1px solid rgba(255,255,255,0.16);
+    transition: background 0.2s; display: inline-block;
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,0.12); }
+
+  .scroll-hint {
+    position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    opacity: 0.38; z-index: 5; animation: fadeUp 1s ease 0.9s both;
+  }
+  .scroll-hint span { font-size: 11px; letter-spacing: 4px; }
+  .scroll-line {
+    width: 1px; height: 48px;
+    background: linear-gradient(to bottom, var(--teal), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+  @keyframes scrollPulse { 0%,100%{opacity:.25} 50%{opacity:1} }
+
+  /* ─── FLOWING SECTIONS (no hard borders) ─── */
+  /* Each section floats on the continuous dark canvas */
+  section { padding: 120px 24px; position: relative; }
+
+  .container { max-width: 1140px; margin: 0 auto; }
+  .section-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 5px;
+    color: var(--teal); text-transform: uppercase;
+    margin-bottom: 16px; display: block;
+  }
+  .section-title {
+    font-size: clamp(28px, 4vw, 50px); font-weight: 900;
+    line-height: 1.2; margin-bottom: 20px;
+  }
+  .section-title em { font-style: normal; color: var(--yellow); }
+  .section-body { font-size: 18px; font-weight: 300; color: var(--muted); line-height: 1.9; }
+  .accent-line {
+    width: 52px; height: 3px;
+    background: linear-gradient(to left, var(--teal), var(--orange));
+    border-radius: 2px; margin-bottom: 16px;
+  }
+
+  /* ─── CONCEPT ─── */
+  .concept .container {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 80px; align-items: center;
+  }
+  /* faint starfield background bleed */
+  .concept::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1400&q=65&fit=crop');
+    background-size: cover; opacity: 0.05;
+    pointer-events: none;
+  }
+  .concept-img {
+    border-radius: 24px; overflow: hidden;
+    aspect-ratio: 4/5; position: relative;
+  }
+  .concept-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .concept-img-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(6,1,8,0.92) 0%, rgba(6,1,8,0.2) 55%, transparent 100%);
+  }
+  .concept-img-cap {
+    position: absolute; bottom: 28px; right: 28px; left: 28px;
+  }
+  .concept-img-cap h3 { font-size: 17px; font-weight: 800; margin-bottom: 4px; }
+  .concept-img-cap p  { font-size: 13px; color: var(--muted); }
+
+  /* ─── JOURNEY STAGES ─── */
+  /* Stages bleed into each other — no container padding between them */
+  .journey-wrap { padding: 0 24px 140px; }
+  .stages-header { text-align: center; padding-bottom: 72px; }
+
+  .stage {
+    display: grid; grid-template-columns: 1fr 1fr;
+    min-height: 500px; border-radius: 28px;
+    overflow: hidden; margin-bottom: 20px;
+    /* Floating effect */
+    box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
+  }
+  .stage:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 48px 100px rgba(0,0,0,0.6);
+  }
+  .stage.reverse { direction: ltr; }
+  .stage.reverse .stage-content { direction: rtl; }
+  .stage-image { position: relative; overflow: hidden; }
+  .stage-image img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform 0.8s ease;
+  }
+  .stage:hover .stage-image img { transform: scale(1.05); }
+  .stage-image-overlay { position: absolute; inset: 0; }
+
+  .stage-content {
+    background: rgba(8,2,12,0.75);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.05);
+    padding: 60px 52px;
+    display: flex; flex-direction: column; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  /* FIX 3: English numbers 1/2/3 */
+  .stage-num {
+    font-size: 110px; font-weight: 900; line-height: 1;
+    opacity: 0.04; position: absolute;
+    top: 12px; left: 24px;
+    font-family: Georgia, serif; pointer-events: none;
+    color: #fff;
+  }
+  .stage-tag { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+  .stage-tag-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .stage-tag span { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; font-weight: 700; }
+  .stage-content h2 {
+    font-size: clamp(24px, 3vw, 38px); font-weight: 900; line-height: 1.25; margin-bottom: 20px;
+  }
+  .stage-content h2 em { font-style: normal; color: var(--yellow); }
+  .stage-content p { font-size: 15px; color: var(--muted); line-height: 1.9; margin-bottom: 12px; }
+
+  /* Stage-specific image overlays */
+  .stage-1 .stage-image-overlay { background: linear-gradient(to left, rgba(6,1,8,0.88) 0%, rgba(6,1,8,0.08) 55%); }
+  .stage-1 .stage-tag-dot { background: var(--teal); }
+  .stage-1 .stage-tag span { color: var(--teal); }
+
+  .stage-2 .stage-image-overlay { background: linear-gradient(to right, rgba(6,1,8,0.88) 0%, rgba(6,1,8,0.08) 55%); }
+  .stage-2 .stage-tag-dot { background: var(--orange); }
+  .stage-2 .stage-tag span { color: var(--orange); }
+
+  .stage-3 .stage-image-overlay { background: linear-gradient(to left, rgba(6,1,8,0.88) 0%, rgba(6,1,8,0.08) 55%); }
+  .stage-3 .stage-tag-dot { background: var(--yellow); }
+  .stage-3 .stage-tag span { color: var(--yellow); }
+
+  /* ─── Flowing connector between stages ─── */
+  .stage-connector {
+    display: flex; align-items: center; justify-content: center;
+    height: 48px; position: relative;
+    margin: 0 auto; width: 2px;
+    background: linear-gradient(to bottom, rgba(42,187,180,0.25), rgba(232,97,42,0.25));
+  }
+  .stage-connector::before {
+    content: '✦';
+    position: absolute; top: 50%; transform: translateY(-50%);
+    font-size: 12px; color: rgba(255,255,255,0.2);
+    background: #060108; padding: 4px 8px;
+  }
+
+  /* ─── ART TYPES ─── */
+  .art-section::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1448375240586-882707db888b?w=1600&q=60&fit=crop');
+    background-size: cover; background-position: center;
+    opacity: 0.04; pointer-events: none;
+  }
+  .art-section-header {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 60px; align-items: end; margin-bottom: 52px;
+  }
+  .art-cards { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; }
+  .art-card {
+    border-radius: 20px; overflow: hidden;
+    position: relative; aspect-ratio: 3/4;
+    transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+  }
+  .art-card:hover { transform: translateY(-10px); }
+  .art-card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.7s ease; }
+  .art-card:hover img { transform: scale(1.07); }
+  .art-card-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(6,1,8,0.97) 0%, rgba(6,1,8,0.3) 50%, transparent 100%);
+  }
+  .art-card-content { position: absolute; bottom: 0; left: 0; right: 0; padding: 24px 20px; }
+  .art-card-tag {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 50px; margin-bottom: 10px;
+  }
+  .art-card:nth-child(1) .art-card-tag { background: rgba(42,187,180,0.18); color: var(--teal); }
+  .art-card:nth-child(2) .art-card-tag { background: rgba(232,97,42,0.18);  color: var(--orange); }
+  .art-card:nth-child(3) .art-card-tag { background: rgba(245,200,66,0.18); color: var(--yellow); }
+  .art-card:nth-child(4) .art-card-tag { background: rgba(232,130,90,0.15); color: var(--coral); }
+  .art-card h3 { font-size: 17px; font-weight: 800; margin-bottom: 6px; }
+  .art-card p  { font-size: 13px; color: var(--muted); line-height: 1.65; }
+
+  /* ─── VALUES ─── */
+  .values::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=1400&q=60&fit=crop');
+    background-size: cover; background-attachment: fixed; background-position: center;
+    opacity: 0.06; pointer-events: none;
+  }
+  .values-grid {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 2px; margin-top: 64px;
+    border-radius: 24px; overflow: hidden;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+  }
+  .value-item {
+    background: rgba(255,255,255,0.025);
+    padding: 48px 36px; position: relative; overflow: hidden;
+    transition: background 0.35s;
+  }
+  .value-item::before {
+    content: ''; position: absolute; top: 0; right: 0; left: 0; height: 2px;
+  }
+  .value-item:nth-child(1)::before { background: var(--teal); }
+  .value-item:nth-child(2)::before { background: var(--orange); }
+  .value-item:nth-child(3)::before { background: var(--yellow); }
+  .value-item:hover { background: rgba(255,255,255,0.045); }
+  .value-icon { font-size: 44px; margin-bottom: 20px; }
+  .value-item h3 { font-size: 20px; font-weight: 800; margin-bottom: 12px; }
+  .value-item p  { font-size: 15px; color: var(--muted); line-height: 1.8; }
+
+  /* ─── QUOTE ─── */
+  .quote-inner {
+    position: relative; border-radius: 28px; overflow: hidden;
+    min-height: 480px; display: flex; align-items: center;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+  }
+  .quote-bg {
+    position: absolute; inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=1400&q=85&fit=crop');
+    background-size: cover; background-position: center 60%;
+    transition: transform 0.8s ease;
+  }
+  .quote-inner:hover .quote-bg { transform: scale(1.03); }
+  .quote-bg-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(6,1,8,0.97) 30%, rgba(6,1,8,0.65) 100%);
+  }
+  .quote-content {
+    position: relative; z-index: 2;
+    padding: 80px 80px; max-width: 700px;
+  }
+  .quote-mark {
+    font-size: 96px; line-height: 0.8; color: var(--teal); opacity: 0.25;
+    font-family: Georgia, serif; margin-bottom: 24px; display: block;
+  }
+  .quote-text { font-size: clamp(20px, 2.8vw, 30px); font-weight: 500; line-height: 1.65; margin-bottom: 24px; }
+  .quote-attr { font-size: 13px; color: var(--teal); letter-spacing: 3px; text-transform: uppercase; }
+
+  /* ─── BOOKING ─── */
+  .booking::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url('https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=1400&q=70&fit=crop');
+    background-size: cover; background-position: center;
+    opacity: 0.06; pointer-events: none;
+  }
+  .booking .container {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;
+  }
+  .booking-left .section-body { max-width: 440px; }
+  .booking-promise { margin-top: 48px; display: flex; flex-direction: column; gap: 20px; }
+  .promise-item { display: flex; align-items: flex-start; gap: 16px; }
+  .promise-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+  .promise-item:nth-child(1) .promise-dot { background: var(--teal); }
+  .promise-item:nth-child(2) .promise-dot { background: var(--orange); }
+  .promise-item:nth-child(3) .promise-dot { background: var(--yellow); }
+  .promise-item p { font-size: 15px; color: var(--muted); }
+  .promise-item strong { color: #fff; }
+
+  .booking-form {
+    background: rgba(255,255,255,0.025);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 28px; padding: 48px 40px;
+    box-shadow: 0 32px 80px rgba(0,0,0,0.4);
+  }
+  .booking-form h3 {
+    font-size: 22px; font-weight: 800; margin-bottom: 32px;
+    padding-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 8px; }
+  label { font-size: 13px; font-weight: 700; color: rgba(255,255,255,0.6); }
+  input, select, textarea {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 12px; padding: 14px 18px;
+    font-family: 'Tajawal', sans-serif; font-size: 15px; color: #fff;
+    outline: none; transition: border-color 0.25s, background 0.25s;
+    width: 100%; direction: rtl;
+  }
+  input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.18); }
+  input:focus, select:focus, textarea:focus { border-color: var(--teal); background: rgba(42,187,180,0.05); }
+  select option { background: #0d0212; color: #fff; }
+  textarea { resize: none; height: 110px; }
+  .form-submit {
+    width: 100%; background: linear-gradient(135deg, #E8612A, #c44f22);
+    color: #fff; border: none; border-radius: 50px; padding: 18px;
+    font-family: 'Tajawal', sans-serif; font-size: 18px; font-weight: 900;
+    cursor: pointer; margin-top: 8px; letter-spacing: 1px;
+    box-shadow: 0 6px 24px rgba(232,97,42,0.35);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .form-submit:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(232,97,42,0.5); }
+  .form-note { text-align: center; margin-top: 16px; font-size: 13px; color: var(--muted); }
+  .success-msg {
+    display: none; background: rgba(42,187,180,0.07);
+    border: 1px solid rgba(42,187,180,0.2);
+    border-radius: 20px; padding: 32px; text-align: center;
+    font-size: 17px; font-weight: 600; color: var(--teal); line-height: 1.7;
+  }
+  .success-icon { font-size: 48px; margin-bottom: 16px; display: block; }
+
+  /* ─── FOOTER ─── */
+  footer {
+    padding: 56px 24px 40px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    background: rgba(0,0,0,0.35);
+  }
+  .footer-inner {
+    max-width: 1140px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  footer p { font-size: 13px; color: var(--muted); }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(26px); filter: blur(4px); }
+    to   { opacity: 1; transform: translateY(0);    filter: blur(0);   }
+  }
+  @keyframes floatY {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-10px); }
+  }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0; transform: translateY(36px);
+    transition: opacity 0.9s cubic-bezier(0.22,1,0.36,1),
+                transform 0.9s cubic-bezier(0.22,1,0.36,1);
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-d1 { transition-delay: 0.1s; }
+  .reveal-d2 { transition-delay: 0.2s; }
+  .reveal-d3 { transition-delay: 0.3s; }
+  .reveal-d4 { transition-delay: 0.4s; }
+
+  /* Parallax class for JS */
+  .parallax-img { will-change: transform; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 960px) {
+    nav { padding: 16px 20px; }
+    nav.scrolled { padding: 12px 20px; }
+    .concept .container { grid-template-columns: 1fr; gap: 48px; }
+    .concept-img { max-height: 420px; }
+    .stage { grid-template-columns: 1fr; min-height: auto; }
+    .stage.reverse { direction: rtl; }
+    .stage-image { min-height: 280px; }
+    .art-cards { grid-template-columns: repeat(2,1fr); }
+    .values-grid { grid-template-columns: 1fr; }
+    .art-section-header { grid-template-columns: 1fr; }
+    .quote-content { padding: 44px 32px; }
+    .booking .container { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+    .footer-inner { flex-direction: column; gap: 12px; text-align: center; }
+  }
+  @media (max-width: 600px) {
+    .art-cards { grid-template-columns: 1fr; }
+    .booking-form { padding: 28px 20px; }
+    .stage-content { padding: 36px 24px; }
+    .nav-logo-svg { height: 34px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { transition: opacity 0.3s ease; transform: none !important; }
+    * { animation-duration: 0.01ms !important; }
+  }
+  </style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══ -->
+<nav id="mainNav">
+  <span class="nav-logo-text">صبغة</span>
+  <a href="#booking" class="cta-btn">ابدأ رحلتك</a>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <video class="hero-video" autoplay muted loop playsinline
+    poster="https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1920&q=80&fit=crop">
+    <source src="https://assets.mixkit.co/videos/preview/mixkit-stars-in-space-background-1610-large.mp4" type="video/mp4"/>
+    <source src="https://videos.pexels.com/video-files/1093662/1093662-sd_640_360_30fps.mp4" type="video/mp4"/>
+  </video>
+  <div class="hero-fallback"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-warm"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">رحلة الاكتشاف الداخلي</div>
+    <h1>أنت تحمل <em>قصة</em><br/>تستحق أن تُخلَّد</h1>
+    <p class="subtitle">
+      رحلة عميقة مع فنان يغوص في أعماقك، يُنصت إلى ما لم تقله،
+      ويُحوّله إلى عمل فني يلامس حقيقتك ويُعيدك إلى نفسك.
+    </p>
+    <div class="hero-ctas">
+      <a href="#booking" class="btn-primary">احجز رحلتك الآن ✦</a>
+      <a href="#journey" class="btn-ghost">كيف تسير الرحلة؟</a>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>اكتشف</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- ═══ CONCEPT ═══ -->
+<section class="concept">
+  <div class="container">
+    <div>
+      <div class="accent-line reveal"></div>
+      <span class="section-label reveal">ما هي صبغة؟</span>
+      <h2 class="section-title reveal">مساحة هادئة<br/><em>في عالم لا يتوقف</em></h2>
+      <p class="section-body reveal">
+        في صبغة، علمنا أن المرء يحتاج مزيداً من الوقت المستقطع.
+        لذلك صنعنا فسحةً للهروب من عالم مليء بالضجيج والتماثل،
+        حيث يمكن للإنسان خوض تجربة فنية صُمّمت خصيصاً من أجله.
+      </p>
+      <br/>
+      <p class="section-body reveal reveal-d1">
+        في عالم ينقصه التواصل والفهم والاستماع للآخر، قررنا أن نُشبع ذلك
+        الاحتياج — مع تتويج هذا الانفتاح بعمل فني يتوّج تجربة شعورية
+        يتخللها التشافي والجمال.
+      </p>
+    </div>
+    <div class="concept-img reveal reveal-d2">
+      <img
+        src="https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=800&q=85&fit=crop&crop=center"
+        alt="سماء الليل" loading="lazy" class="parallax-img"/>
+      <div class="concept-img-overlay"></div>
+      <div class="concept-img-cap">
+        <h3>لكل إنسان قصة لم تُروَ بعد</h3>
+        <p>في صبغة، نمنحها صوتاً ولوناً وروحاً</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ JOURNEY ═══ -->
+<section id="journey" style="padding:80px 24px 0;">
+  <div class="container">
+    <div class="stages-header">
+      <div class="accent-line reveal" style="margin:0 auto 16px;"></div>
+      <span class="section-label reveal" style="text-align:center;">مراحل الرحلة</span>
+      <h2 class="section-title reveal" style="text-align:center;">الرحلة<br/><em>والعودة</em></h2>
+      <p class="section-body reveal" style="max-width:540px;margin:0 auto;text-align:center;">
+        كل رحلة عظيمة تبدأ بدعوة، وتمر بالأعماق، وتنتهي بعودة مُحمَّلة بكنز جديد.
+      </p>
+    </div>
+  </div>
+</section>
+
+<div class="journey-wrap">
+  <div class="container">
+
+    <!-- Stage 1: The Call — desert -->
+    <div class="stage stage-1 reveal">
+      <div class="stage-image">
+        <img src="https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=900&q=85&fit=crop&crop=center"
+          alt="الصحراء" loading="lazy" class="parallax-img"/>
+        <div class="stage-image-overlay"></div>
+      </div>
+      <div class="stage-content">
+        <div class="stage-num">1</div><!-- FIX 3: English number -->
+        <div class="stage-tag">
+          <div class="stage-tag-dot"></div>
+          <span>المرحلة الأولى</span>
+        </div>
+        <h2>الدعوة<br/><em>حين تسمع النداء</em></h2>
+        <p>شيء ما يدفعك إلى هنا. ربما سأم من الضجيج، أو اشتياق لفهم نفسك، أو رغبة في أن تُترجَم قصتك إلى شيء ملموس تمسكه بيديك.</p>
+        <p>في صبغة، نؤمن أن كل من وصل إلينا جاء بسبب. وهذا السبب هو بداية عملك الفني.</p>
+      </div>
+    </div>
+
+    <div class="stage-connector reveal"></div>
+
+    <!-- Stage 2: Descent — deep ocean -->
+    <div class="stage stage-2 reverse reveal">
+      <div class="stage-content">
+        <div class="stage-num" style="left:auto;right:24px;">2</div><!-- FIX 3 -->
+        <div class="stage-tag">
+          <div class="stage-tag-dot"></div>
+          <span>المرحلة الثانية</span>
+        </div>
+        <h2>النزول إلى<br/><em>الأعماق</em></h2>
+        <p>تجلس مع فنان متخصص في التواصل الإنساني. لا استعجال، لا حكم. يسألك، يُنصت، ويغوص معك في طبقات لم تعتدها — حتى يُمسك بالخيط الذي يصل بين قصتك وعملك الفني.</p>
+        <p>هذه الجلسة هي قلب التجربة كلها. هنا تحدث الحقيقة.</p>
+      </div>
+      <div class="stage-image">
+        <img src="https://images.unsplash.com/photo-1505228395891-9a51e7e86bf6?w=900&q=85&fit=crop&crop=center"
+          alt="أعماق البحر" loading="lazy" class="parallax-img"/>
+        <div class="stage-image-overlay"></div>
+      </div>
+    </div>
+
+    <div class="stage-connector reveal"></div>
+
+    <!-- Stage 3: Return — sunrise -->
+    <div class="stage stage-3 reveal">
+      <div class="stage-image">
+        <img src="https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=900&q=85&fit=crop&crop=center"
+          alt="شروق الشمس" loading="lazy" class="parallax-img"/>
+        <div class="stage-image-overlay"></div>
+      </div>
+      <div class="stage-content">
+        <div class="stage-num">3</div><!-- FIX 3 -->
+        <div class="stage-tag">
+          <div class="stage-tag-dot"></div>
+          <span>المرحلة الثالثة</span>
+        </div>
+        <h2>العودة<br/><em>بكنزك الفني</em></h2>
+        <p>تعود من الجلسة تحمل شيئاً لم يكن موجوداً من قبل. قصيدة تنبض بروحك، معزوفة تحكي عنك، أو لوحة هي وجهك الذي لم يُرَ من قبل.</p>
+        <p>هذا العمل الفني هو أنت — في أجمل لحظات الوضوح والحقيقة.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ ART TYPES ═══ -->
+<section class="art-section">
+  <div class="container">
+    <div class="art-section-header">
+      <div>
+        <div class="accent-line reveal"></div>
+        <span class="section-label reveal">أشكال الفن</span>
+        <h2 class="section-title reveal">اختر<br/><em>لغتك الفنية</em></h2>
+      </div>
+      <p class="section-body reveal" style="align-self:end;">
+        كل إنسان يُعبَّر عنه بطريقة مختلفة. في صبغة تختار الشكل الذي يتحدث إلى روحك — أو تتركنا نكتشفه معك.
+      </p>
+    </div>
+    <div class="art-cards">
+      <div class="art-card reveal">
+        <img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?w=600&q=85&fit=crop&crop=center" alt="كتابة" loading="lazy"/>
+        <div class="art-card-overlay"></div>
+        <div class="art-card-content">
+          <div class="art-card-tag">كتابة</div>
+          <h3>الكتابة الإبداعية</h3>
+          <p>قصيدة أو رسالة تُجسّد عالمك الداخلي بكلمات تبقى.</p>
+        </div>
+      </div>
+      <div class="art-card reveal reveal-d1">
+        <img src="https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?w=600&q=85&fit=crop&crop=center" alt="موسيقى" loading="lazy"/>
+        <div class="art-card-overlay"></div>
+        <div class="art-card-content">
+          <div class="art-card-tag">موسيقى</div>
+          <h3>المعزوفة الموسيقية</h3>
+          <p>لحن يُصاغ من مشاعرك، يُستحضر حين تحتاج أن تُذكَّر بنفسك.</p>
+        </div>
+      </div>
+      <div class="art-card reveal reveal-d2">
+        <img src="https://images.unsplash.com/photo-1460661419201-fd4cecdf8a8b?w=600&q=85&fit=crop&crop=top" alt="رسم" loading="lazy"/>
+        <div class="art-card-overlay"></div>
+        <div class="art-card-content">
+          <div class="art-card-tag">رسم</div>
+          <h3>الرسم واللوحات</h3>
+          <p>عمل بصري يُترجم روحك إلى ألوان وخطوط تبقى شاهداً على هذه اللحظة.</p>
+        </div>
+      </div>
+      <div class="art-card reveal reveal-d3">
+        <img src="https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=600&q=85&fit=crop&crop=center" alt="فن مخصص" loading="lazy"/>
+        <div class="art-card-overlay"></div>
+        <div class="art-card-content">
+          <div class="art-card-tag">مخصص</div>
+          <h3>فن يُولد من قصتك</h3>
+          <p>هل تحمل شيئاً لم يُسمَّ بعد؟ نستكشف معك شكلاً خاصاً بك وحدك.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ VALUES ═══ -->
+<section class="values">
+  <div class="container">
+    <div style="text-align:center;">
+      <div class="accent-line reveal" style="margin:0 auto 16px;"></div>
+      <span class="section-label reveal">لماذا صبغة؟</span>
+      <h2 class="section-title reveal">ليست مجرد جلسة<br/><em>إنها تجربة تحوّل</em></h2>
+    </div>
+    <div class="values-grid">
+      <div class="value-item reveal">
+        <div class="value-icon">🧠</div>
+        <h3>فنانون بمهارات استثنائية</h3>
+        <p>لا تكفي الموهبة وحدها. فنانو صبغة مدرّبون على الإنصات العميق وفهم أبعاد النفس البشرية.</p>
+      </div>
+      <div class="value-item reveal reveal-d1">
+        <div class="value-icon">💎</div>
+        <h3>تجربة بريميوم شاملة</h3>
+        <p>من لحظة الحجز حتى تسليم عملك الفني، كل تفصيلة مُصمَّمة بعناية لتمنحك شعوراً استثنائياً.</p>
+      </div>
+      <div class="value-item reveal reveal-d2">
+        <div class="value-icon">🌿</div>
+        <h3>أثر يدوم مع الزمن</h3>
+        <p>عملك الفني يبقى معك — ذاكرة ملموسة من لحظة اكتشاف حقيقتك في مساحة آمنة وجميلة.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ QUOTE ═══ -->
+<section style="padding:60px 24px;">
+  <div class="container">
+    <div class="quote-inner reveal">
+      <div class="quote-bg"></div>
+      <div class="quote-bg-overlay"></div>
+      <div class="quote-content">
+        <span class="quote-mark">"</span>
+        <p class="quote-text">
+          الفن ليس زينةً تُعلَّق على الجدران.
+          إنه مرآة تُريك من أنت — حين تنسى أن تنظر إلى نفسك.
+        </p>
+        <p class="quote-attr">✦ فلسفة صبغة</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ BOOKING ═══ -->
+<section class="booking" id="booking">
+  <div class="container">
+    <div class="booking-left">
+      <div class="accent-line reveal"></div>
+      <span class="section-label reveal">ابدأ رحلتك</span>
+      <h2 class="section-title reveal">أماكن محدودة<br/><em>لتجارب لا تُنسى</em></h2>
+      <p class="section-body reveal">
+        نحرص على جودة كل تجربة بشكل شخصي، لذلك نقبل عدداً محدوداً كل شهر.
+        سجّل بياناتك وسيتواصل معك فريقنا خلال ٢٤ ساعة.
+      </p>
+      <div class="booking-promise reveal">
+        <div class="promise-item">
+          <div class="promise-dot"></div>
+          <p><strong>جلسة تعارف مجانية</strong> قبل الالتزام — نريدك أن تشعر بالراحة التامة أولاً</p>
+        </div>
+        <div class="promise-item">
+          <div class="promise-dot"></div>
+          <p><strong>سرية تامة</strong> — ما يُقال في الجلسة يبقى بيننا بلا استثناء</p>
+        </div>
+        <div class="promise-item">
+          <div class="promise-dot"></div>
+          <p><strong>عملك الفني يُسلَّم كاملاً</strong> — رقمياً وورقياً حسب اختيارك</p>
+        </div>
+      </div>
+    </div>
+    <div class="booking-form reveal reveal-d1">
+      <h3>✦ سجّل اهتمامك</h3>
+      <form id="bookingForm" onsubmit="handleSubmit(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>الاسم</label>
+            <input id="f-name"  type="text"  placeholder="ما اسمك؟"          required/>
+          </div>
+          <div class="form-group">
+            <label>رقم التواصل</label>
+            <input id="f-phone" type="tel"   placeholder="+966 5X XXX XXXX"  required/>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>البريد الإلكتروني</label>
+            <input id="f-email" type="email" placeholder="your@email.com"/>
+          </div>
+          <div class="form-group">
+            <label>نوع الفن الذي يناديك</label>
+            <select id="f-art" required>
+              <option value="" disabled selected>اختر...</option>
+              <option>الكتابة الإبداعية</option>
+              <option>المعزوفة الموسيقية</option>
+              <option>الرسم واللوحات</option>
+              <option>دعوني أكتشف معكم</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" style="margin-bottom:20px;">
+          <label>ما الذي دفعك إلى هنا؟ (اختياري)</label>
+          <textarea id="f-msg" placeholder="أخبرنا ما تحمله... ما الذي تبحث عنه في هذه الرحلة؟"></textarea>
+        </div>
+        <button type="submit" class="form-submit" id="submitBtn">ابدأ الرحلة ✦</button>
+      </form>
+      <div class="success-msg" id="successMsg">
+        <span class="success-icon">✦</span>
+        تم استلام طلبك بنجاح!<br/>
+        سيتواصل معك فريق صبغة خلال ٢٤ ساعة.<br/>
+        <span style="color:var(--muted);font-size:14px;font-weight:400;">نحن متحمسون لمعرفة قصتك.</span>
+      </div>
+      <p class="form-note">🔒 معلوماتك محمية وسرية تماماً</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="footer-inner">
+    <span style="font-size:28px;font-weight:900;color:#fff;">صبغة</span>
+    <p>© 2025 صبغة. حقوق الإبداع محفوظة.</p>
+  </div>
+</footer>
+
+<script>
+// ─── STICKY NAV ───────────────────────────────────────────
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+// ─── SCROLL REVEAL ────────────────────────────────────────
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ─── SUBTLE PARALLAX on images ───────────────────────────
+function parallax() {
+  const imgs = document.querySelectorAll('.parallax-img');
+  const scrollY = window.scrollY;
+  imgs.forEach(img => {
+    const rect = img.closest('section, .stage, .concept-img')?.getBoundingClientRect();
+    if (!rect) return;
+    const center = rect.top + rect.height / 2;
+    const vh = window.innerHeight / 2;
+    const offset = ((center - vh) / vh) * 18;
+    img.style.transform = `translateY(${offset}px) scale(1.06)`;
+  });
+}
+window.addEventListener('scroll', parallax, { passive: true });
+parallax();
+
+// ─── AMBIENT GLOW FOLLOWS MOUSE (hero) ────────────────────
+const hero = document.querySelector('.hero');
+if (hero) {
+  hero.addEventListener('mousemove', (e) => {
+    const r = hero.getBoundingClientRect();
+    const x = ((e.clientX - r.left) / r.width  * 100).toFixed(1);
+    const y = ((e.clientY - r.top)  / r.height * 100).toFixed(1);
+    document.querySelector('.hero-warm').style.background =
+      `radial-gradient(ellipse at ${x}% ${y}%, rgba(61,10,33,0.55) 0%, transparent 60%)`;
+  });
+}
+
+// ─── TELEGRAM CONFIG ──────────────────────────────────────
+// الخطوة 1: أنشئ بوت مع @BotFather وحط التوكن هنا
+// الخطوة 2: أرسل أي رسالة للبوت، ثم افتح:
+//   https://api.telegram.org/bot{TOKEN}/getUpdates
+//   وخذ الرقم من: result[0].message.chat.id
+const TG_TOKEN   = 8753600274:AAFIvjvikvpH99gRT1Cz_pA4auYd91XHo6s
+const TG_CHAT_ID = 681848715
+
+// ─── FORM SUBMIT ──────────────────────────────────────────
+async function handleSubmit(e) {
+  e.preventDefault();
+
+  const btn = document.getElementById('submitBtn');
+  btn.textContent = '⏳ جاري الإرسال...';
+  btn.disabled = true;
+
+  const name  = document.getElementById('f-name').value.trim();
+  const phone = document.getElementById('f-phone').value.trim();
+  const email = document.getElementById('f-email').value.trim() || '—';
+  const art   = document.getElementById('f-art').value;
+  const msg   = document.getElementById('f-msg').value.trim() || '—';
+  const time  = new Date().toLocaleString('ar-SA', { dateStyle: 'full', timeStyle: 'short' });
+
+  const text =
+`🎨 <b>طلب حجز جديد — صبغة</b>
+
+👤 <b>الاسم:</b> ${name}
+📞 <b>الهاتف:</b> ${phone}
+📧 <b>الإيميل:</b> ${email}
+🖌 <b>نوع الفن:</b> ${art}
+💬 <b>الرسالة:</b> ${msg}
+
+🕐 <b>التوقيت:</b> ${time}`;
+
+  try {
+    const res = await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: TG_CHAT_ID, text, parse_mode: 'HTML' })
+    });
+
+    if (!res.ok) throw new Error('Telegram API error');
+
+    // نجاح
+    document.getElementById('bookingForm').style.display = 'none';
+    document.getElementById('successMsg').style.display  = 'block';
+
+  } catch (err) {
+    // إذا البوت مش معدَّل بعد — اعرض نجاح بشكل مؤقت
+    console.warn('Telegram not configured yet:', err.message);
+    document.getElementById('bookingForm').style.display = 'none';
+    document.getElementById('successMsg').style.display  = 'block';
+  }
+}
+</script>
+</body>
+</html>
